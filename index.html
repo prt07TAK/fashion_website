@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Modern Fashion for Gen-Z</title>
+    <meta name="description" content="Discover sustainable, trendy fashion that speaks to your unique identity. NEXUS - Redefining style for the next generation.">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'coral': '#ff6b6b',
+                        'teal': '#4ecdc4',
+                        'lavender': '#a8e6cf',
+                        'amber': '#ffd93d',
+                        'charcoal': '#1a1a1a',
+                        'warm-gray': '#f8f8f8',
+                        'success': '#6bcf7f',
+                        'warning': '#ffa726',
+                        'error': '#ef5350'
+                    },
+                    fontFamily: {
+                        'playfair': ['Playfair Display', 'serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                        'space': ['Space Grotesk', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-bg {
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 25%, #a8e6cf 50%, #ffd93d 75%, #ff6b6b 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 12s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+        }
+        
+        .typewriter {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #a8e6cf, #ffd93d);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientText 4s ease-in-out infinite;
+        }
+        
+        @keyframes gradientText {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-12px) rotateX(5deg) rotateY(5deg) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.1);
+        }
+        
+        .cart-count {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .reveal.stagger {
+            transition-delay: 0.1s;
+        }
+        
+        .reveal.stagger:nth-child(2) { transition-delay: 0.2s; }
+        .reveal.stagger:nth-child(3) { transition-delay: 0.3s; }
+        .reveal.stagger:nth-child(4) { transition-delay: 0.4s; }
+        
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .shape:nth-child(2) { animation-delay: -2s; }
+        .shape:nth-child(3) { animation-delay: -4s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .category-card {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,107,107,0.8), rgba(78,205,196,0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        
+        .category-card:hover::before {
+            opacity: 1;
+        }
+        
+        .category-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .hero-carousel .splide__slide img {
+            filter: brightness(0.7) contrast(1.1);
+            transition: filter 0.3s ease;
+        }
+        
+        .hero-carousel .splide__slide:hover img {
+            filter: brightness(0.8) contrast(1.2);
+        }
+    </style>
+</head>
+<body class="bg-white text-charcoal font-inter">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <img src="resources/brand-logo.png" alt="NEXUS" class="h-8 w-auto">
+                    <span class="ml-3 text-xl font-playfair font-bold text-charcoal">NEXUS</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-coral font-medium border-b-2 border-coral pb-1">Home</a>
+                    <a href="products.html" class="text-charcoal hover:text-coral transition-colors duration-200">Products</a>
+                    <a href="about.html" class="text-charcoal hover:text-coral transition-colors duration-200">About</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="relative p-2 text-charcoal hover:text-coral transition-colors duration-200" onclick="toggleCart()">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h7a2 2 0 002-2v-4"></path>
+                        </svg>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-coral text-white text-xs rounded-full h-5 w-5 flex items-center justify-center cart-count hidden">0</span>
+                    </button>
+                    <button class="md:hidden p-2 text-charcoal hover:text-coral transition-colors duration-200" onclick="toggleMobileMenu()">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-lg">
+            <div class="px-4 py-2 space-y-2">
+                <a href="index.html" class="block py-2 text-coral font-medium">Home</a>
+                <a href="products.html" class="block py-2 text-charcoal hover:text-coral transition-colors duration-200">Products</a>
+                <a href="about.html" class="block py-2 text-charcoal hover:text-coral transition-colors duration-200">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center hero-bg overflow-hidden">
+        <canvas id="particles-canvas"></canvas>
+        <div class="floating-shapes">
+            <div class="shape w-20 h-20 bg-white/10 rounded-full top-20 left-10"></div>
+            <div class="shape w-16 h-16 bg-white/10 rounded-lg top-40 right-20"></div>
+            <div class="shape w-24 h-24 bg-white/10 rounded-full bottom-32 left-1/4"></div>
+        </div>
+        
+        <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+            <h1 class="text-5xl md:text-7xl font-playfair font-bold mb-6">
+                <span id="typed-text" class="typewriter">Define Your Style</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto opacity-90">Discover curated fashion that speaks to your unique identity. Sustainable, trendy, and authentically you.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="products.html" class="bg-white text-charcoal px-8 py-4 rounded-full font-space font-medium hover:bg-coral hover:text-white transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Shop Collection
+                </a>
+                <button class="border-2 border-white text-white px-8 py-4 rounded-full font-space font-medium hover:bg-white hover:text-charcoal transition-all duration-300 transform hover:scale-105" onclick="scrollToSection('featured')">
+                    Explore Trends
+                </button>
+            </div>
+        </div>
+        
+        <!-- Hero Image Carousel -->
+        <div class="absolute inset-0 opacity-30">
+            <div class="splide hero-carousel h-full">
+                <div class="splide__track h-full">
+                    <ul class="splide__list h-full">
+                        <li class="splide__slide h-full">
+                            <img src="resources/product-1.jpg" alt="Fashion 1" class="w-full h-full object-cover">
+                        </li>
+                        <li class="splide__slide h-full">
+                            <img src="resources/product-2.jpg" alt="Fashion 2" class="w-full h-full object-cover">
+                        </li>
+                        <li class="splide__slide h-full">
+                            <img src="resources/product-3.jpg" alt="Fashion 3" class="w-full h-full object-cover">
+                        </li>
+                        <li class="splide__slide h-full">
+                            <img src="resources/product-4.jpg" alt="Fashion 4" class="w-full h-full object-cover">
+                        </li>
+                        <li class="splide__slide h-full">
+                            <img src="resources/product-5.jpg" alt="Fashion 5" class="w-full h-full object-cover">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section id="featured" class="py-20 bg-warm-gray">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl md:text-5xl font-playfair font-bold text-charcoal mb-4">Trending Now</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Discover the latest pieces that are defining this season's fashion landscape</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-lg reveal stagger">
+                    <div class="relative overflow-hidden">
+                        <img src="resources/product-1.jpg" alt="Streetwear Hoodie" class="product-image w-full h-64 object-cover transition-transform duration-500">
+                        <div class="absolute top-4 left-4 bg-coral text-white px-3 py-1 rounded-full text-sm font-medium">Trending</div>
+                        <button class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full hover:bg-coral hover:text-white transition-all duration-300 shadow-lg" onclick="addToCart(1, 'Streetwear Hoodie', 89.99, 'resources/product-1.jpg')">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </button>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <div class="flex text-amber-400">
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                </div>
+                                <span class="text-sm text-gray-600">(4.8)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-charcoal mb-2">Streetwear Hoodie</h3>
+                        <p class="text-gray-600 mb-4">Premium cotton blend with modern fit</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-coral">$89.99</span>
+                            <button class="bg-charcoal text-white px-6 py-2 rounded-full font-space font-medium hover:bg-coral transition-colors duration-300 transform hover:scale-105" onclick="addToCart(1, 'Streetwear Hoodie', 89.99, 'resources/product-1.jpg')">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-lg reveal stagger">
+                    <div class="relative overflow-hidden">
+                        <img src="resources/product-2.jpg" alt="Designer Sneakers" class="product-image w-full h-64 object-cover transition-transform duration-500">
+                        <div class="absolute top-4 left-4 bg-success text-white px-3 py-1 rounded-full text-sm font-medium">Eco-Friendly</div>
+                        <button class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full hover:bg-coral hover:text-white transition-all duration-300 shadow-lg" onclick="addToCart(2, 'Designer Sneakers', 129.99, 'resources/product-2.jpg')">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-charcoal mb-2">Designer Sneakers</h3>
+                        <p class="text-gray-600 mb-4">Comfort meets style in every step</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-coral">$129.99</span>
+                            <button class="bg-charcoal text-white px-6 py-2 rounded-full font-space font-medium hover:bg-coral transition-colors duration-300 transform hover:scale-105" onclick="addToCart(2, 'Designer Sneakers', 129.99, 'resources/product-2.jpg')">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-lg reveal stagger">
+                    <div class="relative overflow-hidden">
+                        <img src="resources/product-3.jpg" alt="Crossbody Bag" class="product-image w-full h-64 object-cover transition-transform duration-500">
+                        <div class="absolute top-4 left-4 bg-amber text-charcoal px-3 py-1 rounded-full text-sm font-medium">Limited Edition</div>
+                        <button class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-full hover:bg-coral hover:text-white transition-all duration-300 shadow-lg" onclick="addToCart(3, 'Crossbody Bag', 79.99, 'resources/product-3.jpg')">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-charcoal mb-2">Crossbody Bag</h3>
+                        <p class="text-gray-600 mb-4">Premium leather with modern design</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-coral">$79.99</span>
+                            <button class="bg-charcoal text-white px-6 py-2 rounded-full font-space font-medium hover:bg-coral transition-colors duration-300 transform hover:scale-105" onclick="addToCart(3, 'Crossbody Bag', 79.99, 'resources/product-3.jpg')">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl md:text-5xl font-playfair font-bold text-charcoal mb-4">Shop by Category</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Find your perfect style across our curated collections</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="category-card relative group overflow-hidden rounded-2xl shadow-lg reveal stagger">
+                    <img src="resources/product-5.jpg" alt="Clothing" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    <div class="category-content absolute bottom-6 left-6 text-white">
+                        <h3 class="text-2xl font-bold mb-2">Clothing</h3>
+                        <p class="mb-4">Essential pieces for every wardrobe</p>
+                        <a href="products.html?category=clothing" class="inline-block bg-white text-charcoal px-6 py-3 rounded-full font-space font-medium hover:bg-coral hover:text-white transition-all duration-300 transform hover:scale-105">
+                            Shop Now
+                        </a>
+                    </div>
+                </div>
+
+                <div class="category-card relative group overflow-hidden rounded-2xl shadow-lg reveal stagger">
+                    <img src="resources/product-6.jpg" alt="Accessories" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    <div class="category-content absolute bottom-6 left-6 text-white">
+                        <h3 class="text-2xl font-bold mb-2">Accessories</h3>
+                        <p class="mb-4">Complete your look with style</p>
+                        <a href="products.html?category=accessories" class="inline-block bg-white text-charcoal px-6 py-3 rounded-full font-space font-medium hover:bg-coral hover:text-white transition-all duration-300 transform hover:scale-105">
+                            Shop Now
+                        </a>
+                    </div>
+                </div>
+
+                <div class="category-card relative group overflow-hidden rounded-2xl shadow-lg reveal stagger">
+                    <img src="resources/product-8.jpg" alt="Footwear" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    <div class="category-content absolute bottom-6 left-6 text-white">
+                        <h3 class="text-2xl font-bold mb-2">Footwear</h3>
+                        <p class="mb-4">Step into the latest trends</p>
+                        <a href="products.html?category=footwear" class="inline-block bg-white text-charcoal px-6 py-3 rounded-full font-space font-medium hover:bg-coral hover:text-white transition-all duration-300 transform hover:scale-105">
+                            Shop Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="py-20 bg-warm-gray">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl md:text-5xl font-playfair font-bold text-charcoal mb-4">Loved by Fashion Enthusiasts</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">See what our community is saying about NEXUS</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl p-8 shadow-lg reveal stagger">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-coral rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            S
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-charcoal">Sarah M.</h4>
+                            <div class="flex text-amber-400 text-sm">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"Absolutely love the quality and style! The hoodie is incredibly comfortable and the design is exactly what I was looking for. Fast shipping too!"</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg reveal stagger">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-teal rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            M
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-charcoal">Mike R.</h4>
+                            <div class="flex text-amber-400 text-sm">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"The sneakers are amazing! Perfect fit and super comfortable. I get compliments everywhere I go. Will definitely be buying more!"</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg reveal stagger">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-lavender rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            A
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-charcoal">Alex K.</h4>
+                            <div class="flex text-amber-400 text-sm">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"Great customer service and high-quality products. The crossbody bag is perfect for everyday use and looks so stylish!"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-20 bg-charcoal text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="reveal">
+                <h2 class="text-4xl md:text-5xl font-playfair font-bold mb-4">Stay in Style</h2>
+                <p class="text-xl mb-8 opacity-90">Get exclusive access to new collections, styling tips, and member-only offers. Join 10,000+ fashion enthusiasts!</p>
+                <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onsubmit="subscribeNewsletter(event)">
+                    <input type="email" id="newsletter-email" placeholder="Enter your email" class="flex-1 px-6 py-3 rounded-full text-charcoal font-inter focus:outline-none focus:ring-2 focus:ring-coral" required>
+                    <button type="submit" class="bg-coral text-white px-8 py-3 rounded-full font-space font-medium hover:bg-teal transition-colors duration-300 transform hover:scale-105">
+                        Subscribe
+                    </button>
+                </form>
+                <p class="text-sm opacity-70 mt-4">No spam, unsubscribe anytime. Privacy policy applies.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-warm-gray py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-6">
+                        <img src="resources/brand-logo.png" alt="NEXUS" class="h-10 w-auto">
+                        <span class="ml-3 text-2xl font-playfair font-bold text-charcoal">NEXUS</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 max-w-md">Redefining fashion for the next generation. Sustainable, stylish, and authentically you.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-coral transition-colors duration-200">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-coral transition-colors duration-200">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-coral transition-colors duration-200">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-charcoal mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="products.html" class="text-gray-600 hover:text-coral transition-colors duration-200">All Products</a></li>
+                        <li><a href="products.html?category=clothing" class="text-gray-600 hover:text-coral transition-colors duration-200">Clothing</a></li>
+                        <li><a href="products.html?category=accessories" class="text-gray-600 hover:text-coral transition-colors duration-200">Accessories</a></li>
+                        <li><a href="products.html?category=footwear" class="text-gray-600 hover:text-coral transition-colors duration-200">Footwear</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-charcoal mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="about.html" class="text-gray-600 hover:text-coral transition-colors duration-200">About Us</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-coral transition-colors duration-200">Contact</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-coral transition-colors duration-200">Size Guide</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-coral transition-colors duration-200">Shipping Info</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-8 text-center">
+                <p class="text-gray-500 text-sm">&copy; 2024 NEXUS Fashion. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
+        <div class="p-6 border-b border-gray-100">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-semibold text-charcoal">Shopping Cart</h3>
+                <button onclick="toggleCart()" class="text-gray-400 hover:text-charcoal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6">
+            <div id="empty-cart" class="text-center py-12">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h7a2 2 0 002-2v-4"></path>
+                </svg>
+                <p class="text-gray-500">Your cart is empty</p>
+                <a href="products.html" class="inline-block mt-4 bg-coral text-white px-6 py-2 rounded-full font-space font-medium hover:bg-teal transition-colors duration-300">
+                    Start Shopping
+                </a>
+            </div>
+        </div>
+        <div id="cart-footer" class="p-6 border-t border-gray-100 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-lg font-semibold">Total:</span>
+                <span id="cart-total" class="text-2xl font-bold text-coral">$0.00</span>
+            </div>
+            <a href="cart.html" class="block w-full bg-charcoal text-white text-center py-3 rounded-full font-space font-medium hover:bg-coral transition-colors duration-300">
+                Checkout
+            </a>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40" onclick="toggleCart()"></div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification bg-success text-white px-6 py-3 rounded-lg shadow-lg">
+        <p id="notification-text"></p>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
